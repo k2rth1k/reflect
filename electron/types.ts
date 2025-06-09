@@ -1,14 +1,10 @@
 import {WorkoutData} from "../database/DatabaseService";
+import {WeeklySets} from "../database/queryTypes";
 
-
-export interface DatabaseResult<T = any> {
-    success: boolean;
-    data?: T;
-    error?: string;
-}
 
 // Electron API interface for renderer
 export interface ElectronAPI {
-    getAllWorkoutData: () => Promise<DatabaseResult<WorkoutData[]>>;
-    getAllExercises: () => Promise<DatabaseResult<string[]>>;
+    getAllWorkoutData: () => Promise<WorkoutData[]>;
+    getAllExercises: () => Promise<string[]>;
+    getAllWeeklySets: () => Promise<WeeklySets[]>;
 }
