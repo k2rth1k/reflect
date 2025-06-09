@@ -1,7 +1,7 @@
 {
-  "name": "my-app",
+  "name": "reflect",
   "version": "0.2.0",
-  "author": "Your Name",
+  "author": "Karthik Nelapati",
   "description": "React-TypeScript-Electron sample with Create React App and Electron Builder",
   "homepage": ".",
   "main": "build/electron/main.js",
@@ -10,12 +10,14 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^14.4.3",
+    "@types/better-sqlite3": "^7.6.13",
     "@types/d3": "^7.4.3",
     "@types/electron-devtools-installer": "^2.2.2",
     "@types/jest": "^29.4.0",
     "@types/node": "^18.13.0",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
+    "better-sqlite3": "^11.10.0",
     "d3": "^7.9.0",
     "electron-devtools-installer": "^3.2.0",
     "electron-reload": "^1.5.0",
@@ -61,11 +63,14 @@
       "last 1 safari version"
     ]
   },
+  "resolutions": {
+    "@types/node": "22.15.30"
+  },
   "devDependencies": {
     "concurrently": "^7.6.0",
     "cross-env": "^7.0.3",
-    "electron": "^23.3.13",
-    "electron-builder": "^23.6.0",
+    "electron": "^33.4.2",
+    "electron-builder": "^24.4.0",
     "wait-on": "^7.0.1"
   }
 }
