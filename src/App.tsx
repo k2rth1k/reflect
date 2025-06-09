@@ -1,17 +1,21 @@
 import './App.css';
-import LineChart from "./Components/LineChart";
-import {useEffect} from "react";
+import LineChart, {DataPoint} from "./Components/LineChart";
+import {useEffect, useState} from "react";
 
 function App() {
-
+    const [data, setData] = useState<DataPoint[]>([]);
+    const tmp: DataPoint[] = [];
     useEffect(() => {
-        window.electronAPI.getAllExercises().then((e) => {
-            console.log(e)
+        window.electronAPI.getAllWeeklySets().then((res) => {
+            res.forEach(val => tmp.push({x: val.week_number, y: val.sets}))
+            setData(tmp);
         });
+
     }, []);
+
     return (
         <div className="App">
-            <LineChart/>
+            <LineChart data={data}/>
         </div>
     );
 }

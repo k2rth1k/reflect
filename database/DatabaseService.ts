@@ -1,4 +1,7 @@
 import Database from "better-sqlite3";
+import {createRawDataTable} from "./ddl";
+import {all_weekly_sets} from "./queries";
+import {WeeklySets} from "./queryTypes";
 
 const fs = require('fs');
 // Define interfaces for your data
@@ -45,23 +48,7 @@ class DatabaseService {
     createStrongTable() {
         try {
 
-    const createWorkoutTable = this.db.prepare(`
-                CREATE TABLE IF NOT EXISTS workout_raw (
-                    date Timestamp NOT NULL,
-                    workout_name TEXT NOT NULL,
-                    duration TEXT,
-                    exercise_name TEXT NOT NULL,
-                    set_order INTEGER NOT NULL,
-                    weight REAL,
-                    reps REAL,
-                    distance REAL DEFAULT 0,
-                    seconds REAL DEFAULT 0,
-                    notes TEXT,
-                    workout_notes TEXT,
-                    rpe INTEGER,
-                    muscle Varchar(255)
-                )
-            `);
+    const createWorkoutTable = this.db.prepare(createRawDataTable);
 
             createWorkoutTable.run();
             console.log('Workout raw table created successfully');
@@ -72,7 +59,7 @@ class DatabaseService {
 
             // Prepare insert statement
             const insertWorkout = this.db.prepare(`
-                INSERT INTO workout_raw (date, workout_name, duration, exercise_name, set_order, weight, reps, distance, seconds, notes, workout_notes, rpe,muscle)
+                INSERT INTO workout_raw (date, workout_name, duration, exercise_name, set_order, weight, reps, distance, seconds, notes, workout_notes, rpe, muscle)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,'')
             `);
 
@@ -133,10 +120,14 @@ class DatabaseService {
     }
 
 
-    // Get all users
     getAllExercises(): string[] {
         const select = this.db.prepare('select distinct exercise_name from workout_raw');
         return select.all() as string[];
+    }
+
+    getAllWeeklySets(): WeeklySets[] {
+        const select = this.db.prepare(all_weekly_sets);
+        return select.all() as WeeklySets[];
     }
 
 

@@ -3,6 +3,7 @@ import {app, BrowserWindow, ipcMain} from 'electron';
 import installExtension, {REACT_DEVELOPER_TOOLS} from "electron-devtools-installer";
 import * as path from 'path';
 import {initializeDatabase, WorkoutData} from "../database/DatabaseService";
+import {WeeklySets} from "../database/queryTypes";
 
 function createWindow() {
     const win = new BrowserWindow({
@@ -68,6 +69,10 @@ function StartDB()  {
 
     ipcMain.handle('db:get-exercises', async (): Promise<string[]> => {
         return db.getAllExercises();
+    })
+
+    ipcMain.handle('db:get-weekly-sets', async (): Promise<WeeklySets[]> => {
+        return db.getAllWeeklySets();
     })
 
     return db;
