@@ -1,7 +1,7 @@
 import Database from "better-sqlite3";
 import { createRawDataTable } from "./ddl";
 import { all_weekly_sets } from "./queries";
-import { WeeklySets } from "./queryTypes";
+import {ExercisesInfo, WeeklySets} from "./queryTypes";
 import path from "path";
 import { app } from "electron";
 import log from "electron-log/main";
@@ -127,11 +127,11 @@ class DatabaseService {
     return select.all() as WorkoutData[];
   }
 
-  getAllExercises(): string[] {
+  getAllExercises(): ExercisesInfo[] {
     const select = this.db.prepare(
       "select distinct exercise_name from workout_raw",
     );
-    return select.all() as string[];
+    return select.all() as ExercisesInfo[];
   }
 
   getAllWeeklySets(): WeeklySets[] {
