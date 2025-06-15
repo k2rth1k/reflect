@@ -1,7 +1,7 @@
 import { createHashRouter, Navigate } from "react-router-dom";
 import React from "react";
 import NotFound from "./NotFound";
-import Home from "../Components/home";
+import Home from "../components/home";
 
 export const router = createHashRouter([
   {

@@ -93,5 +93,4 @@ out/
 .idea
 build/
 dist/
-data/
 .yarn/
