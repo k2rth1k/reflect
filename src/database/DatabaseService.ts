@@ -1,7 +1,7 @@
 import Database from "better-sqlite3";
 import { createRawDataTable } from "./ddl";
 import { all_weekly_sets } from "./queries";
-import {ExercisesInfo, WeeklySets} from "./queryTypes";
+import { ExercisesInfo, WeeklySets } from "./queryTypes";
 import path from "path";
 import { app } from "electron";
 import log from "electron-log/main";

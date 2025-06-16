@@ -1,5 +1,5 @@
 import { WorkoutData } from "./database/DatabaseService";
-import {ExercisesInfo, WeeklySets} from "./database/queryTypes";
+import { ExercisesInfo, WeeklySets } from "./database/queryTypes";
 
 declare global {
   interface Window {

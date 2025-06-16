@@ -1,44 +1,33 @@
-import {createHashRouter, Navigate} from "react-router-dom";
+import { createHashRouter } from "react-router-dom";
 import React from "react";
 import NotFound from "./NotFound";
 import Home from "../components/home";
 import DataGridDemo from "../components/pages/tagExecises";
+import Layout from "../components/layout/Layout";
 
 export const router = createHashRouter([
-    {
+  {
+    path: "/",
+
+    children: [
+      {
         path: "/",
-        errorElement: <NotFound/>,
+        element: <Layout />,
         children: [
-            {
-                index: true,
-                element: <Navigate to="/home" replace/>,
-            },
-            {
-                path: "/home",
-                element: <Home/>,
-            },
-            {
-                path: '/tag',
-                element: <DataGridDemo/>
-            }
-            // {
-            //     path: 'analytics',
-            //     element: <Analytics />,
-            //     children: [
-            //         {
-            //             path: ':period',
-            //             element: <Analytics />
-            //         }
-            //     ]
-            // },
-            // {
-            //     path: 'workouts/:workoutId',
-            //     element: <WorkoutDetail />
-            // },
-            // {
-            //     path: 'settings',
-            //     element: <Settings />
-            // }
+          {
+            path: "/home",
+            element: <Home />,
+          },
+          {
+            path: "tag",
+            element: <DataGridDemo />,
+          },
+          {
+            path: "*",
+            element: <NotFound />,
+          },
         ],
-    },
+      },
+    ],
+  },
 ]);

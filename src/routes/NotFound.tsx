@@ -6,7 +6,7 @@ const NotFound: React.FC = () => {
 
   return (
     <div className="not-found">
-      <div className="not-found-content">
+      <div className="not-found-content" style={{ color: "white" }}>
         <div className="error-code">404</div>
         <h1>Page Not Found</h1>
         <p className="error-message">
