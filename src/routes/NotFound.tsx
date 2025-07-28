@@ -6,7 +6,7 @@ const NotFound: React.FC = () => {
 
   return (
     <div className="not-found">
-      <div className="not-found-content">
+      <div className="not-found-content" style={{ color: "white" }}>
         <div className="error-code">404</div>
         <h1>Page Not Found</h1>
         <p className="error-message">
@@ -24,11 +24,8 @@ const NotFound: React.FC = () => {
           <Link to="/home" className="btn btn-primary">
             🏠 Go Home
           </Link>
-          <Link to="/dashboard" className="btn btn-secondary">
-            📊 Dashboard
-          </Link>
-          <Link to="/analytics" className="btn btn-secondary">
-            📈 Analytics
+          <Link to="/tag" className="btn btn-secondary">
+            📊 Tag
           </Link>
         </div>
 
@@ -39,13 +36,7 @@ const NotFound: React.FC = () => {
               <Link to="/home">Home - Main overview</Link>
             </li>
             <li>
-              <Link to="/dashboard">Dashboard - Workout summary</Link>
-            </li>
-            <li>
-              <Link to="/analytics">Analytics - Progress tracking</Link>
-            </li>
-            <li>
-              <Link to="/settings">Settings - App configuration</Link>
+              <Link to="/tag">Tag</Link>
             </li>
           </ul>
         </div>
