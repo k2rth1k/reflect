@@ -53,8 +53,17 @@ const Layout: React.FC<LayoutProps> = () => {
             </ul>
           </nav>
         </aside>
-
-        <Outlet />
+        <div
+          style={{
+            marginTop: "1.5em",
+            marginLeft: "1.5em",
+            marginRight: "1em",
+            marginBottom: "1em",
+            paddingBottom: "0.4em",
+          }}
+        >
+          <Outlet />
+        </div>
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import { WorkoutData } from "./database/DatabaseService";
-import { ExercisesInfo, WeeklySets } from "./database/queryTypes";
+import { ExercisesInfo, WeeklySets, ExerciseSets } from "./database/queryTypes";
 
 declare global {
   interface Window {
@@ -7,6 +7,7 @@ declare global {
       getAllWorkoutData: () => Promise<WorkoutData[]>;
       getAllExercises: () => Promise<ExercisesInfo[]>;
       getAllWeeklySets: () => Promise<WeeklySets[]>;
+      getExerciseWeeklySets: (exerciseName: string) => Promise<ExerciseSets[]>;
     };
   }
 }

@@ -14,16 +14,8 @@ if (require("electron-squirrel-startup")) {
 
 const createWindow = (): void => {
   // Create the browser window.
-
-  const primaryDisplay = screen.getPrimaryDisplay();
-  console.log(primaryDisplay);
-  let screenDimention = primaryDisplay.workAreaSize;
-  const width = screenDimention.width;
-  const height = screenDimention.height;
-
   const mainWindow = new BrowserWindow({
-    height: height,
-    width: width,
+    fullscreen: true,
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
@@ -73,6 +65,10 @@ function StartDB() {
 
   ipcMain.handle("db:get-weekly-sets", async (): Promise<WeeklySets[]> => {
     return db.getAllWeeklySets();
+  });
+
+  ipcMain.handle("db:get-exercise-weekly-sets", async (_event, exerciseName: string) => {
+    return db.getExerciseWeeklySets(exerciseName);
   });
 
   return db;

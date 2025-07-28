@@ -1,7 +1,9 @@
 import Database from "better-sqlite3";
 import { createRawDataTable } from "./ddl";
-import { all_weekly_sets } from "./queries";
+import { all_weekly_sets } from "./Queries/all_weekly_sets";
+import { exercise_weekly_sets } from "./Queries/benchpress_weekly_sets";
 import { ExercisesInfo, WeeklySets } from "./queryTypes";
+import { ExerciseSets } from "./queryTypes";
 import path from "path";
 import { app } from "electron";
 import log from "electron-log/main";
@@ -40,6 +42,9 @@ class DatabaseService {
 
     // Enable foreign keys
     this.db.pragma("foreign_keys = ON");
+
+    
+    
 
     this.createStrongTable();
   }
@@ -116,6 +121,12 @@ class DatabaseService {
 
       insertMany(workoutData);
       console.log(`Inserted ${workoutData.length} workout records`);
+      
+      if (process.env.NODE_ENV === "development") {
+        const fileDbPath = __dirname+ "/mydatabase.db";
+        console.log("backup_file_here: ",fileDbPath)
+        this.db.backup(fileDbPath);
+    }
     } catch (error) {
       console.error("Error creating workout table or importing data:", error);
     }
@@ -125,6 +136,15 @@ class DatabaseService {
   getAllWorkoutData(): WorkoutData[] {
     const select = this.db.prepare("SELECT * FROM workout_raw");
     return select.all() as WorkoutData[];
+  }
+
+  /**
+   * Get weekly sets for a given exercise name.
+   * @param exerciseName The exercise name to filter by
+   */
+  getExerciseWeeklySets(exerciseName: string): ExerciseSets[] {
+    const select = this.db.prepare(exercise_weekly_sets);
+    return select.all(exerciseName, exerciseName) as ExerciseSets[];
   }
 
   getAllExercises(): ExercisesInfo[] {

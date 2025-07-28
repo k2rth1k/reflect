@@ -8,6 +8,7 @@ import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import Backdrop from "@mui/material/Backdrop";
 import Typography from "@mui/material/Typography";
+import { DarkTheme } from "../../utils/themeColors";
 
 const style = {
   position: "absolute",
@@ -128,12 +129,36 @@ export default function DataGridDemo() {
         columns={columns}
         rowHeight={80}
         sx={{
+          "& .MuiDataGrid-columnHeader": {
+            backgroundColor: DarkTheme.cardPrimary, // Adjust color and thickness as needed
+          },
           "& .MuiDataGrid-cell": {
-            borderRight: "1px solid #ccc", // Adjust color and thickness as needed
+            borderRight: `1px solid ${DarkTheme.separatingLineColor}`, // Adjust color and thickness as needed
+          },
+          "& .MuiTablePagination-actions": {
+            color: DarkTheme.boldText,
+          },
+          "& .MuiTablePagination-selectLabel": {
+            color: DarkTheme.boldText,
+          },
+          "& .MuiTablePagination-select": {
+            color: DarkTheme.boldText,
+          },
+          "& .MuiTablePagination-displayedRows": {
+            color: DarkTheme.boldText,
+          },
+          "& .MuiDataGrid-row:hover": {
+            backgroundColor: DarkTheme.hover,
+          },
+          "& .MuiDataGrid-row": {
+            borderBottom: `0px solid ${DarkTheme.separatingLineColor}`,
           },
           "& .MuiDataGrid-cell:last-child": {
             borderRight: "none", // Remove border on the last cell
           },
+          border: `1px solid ${DarkTheme.separatingLineColor}`,
+          backgroundColor: DarkTheme.cardPrimary,
+          color: DarkTheme.boldText,
         }}
         initialState={{
           pagination: {
