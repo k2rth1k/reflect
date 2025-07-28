@@ -3,7 +3,7 @@
 
 import { contextBridge, ipcRenderer } from "electron";
 import { WorkoutData } from "./database/DatabaseService";
-import { WeeklySets, ExerciseSets } from "./database/queryTypes";
+import { WeeklySets, ExerciseSets, SessionPR } from "./database/queryTypes";
 
 // Expose database API to renderer process
 contextBridge.exposeInMainWorld("electronAPI", {
@@ -15,4 +15,8 @@ contextBridge.exposeInMainWorld("electronAPI", {
     ipcRenderer.invoke("db:get-weekly-sets"),
   getExerciseWeeklySets: (exerciseName: string): Promise<ExerciseSets[]> =>
     ipcRenderer.invoke("db:get-exercise-weekly-sets", exerciseName),
+  getAllSessionPRs: (exerciseName: string): Promise<SessionPR[]> =>
+    ipcRenderer.invoke("db:get-session-prs", exerciseName),
+  getWeeklyPRs: (exerciseName: string): Promise<SessionPR[]> =>
+    ipcRenderer.invoke("db:get-weekly-prs", exerciseName),
 });

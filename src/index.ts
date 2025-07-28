@@ -67,8 +67,19 @@ function StartDB() {
     return db.getAllWeeklySets();
   });
 
-  ipcMain.handle("db:get-exercise-weekly-sets", async (_event, exerciseName: string) => {
-    return db.getExerciseWeeklySets(exerciseName);
+  ipcMain.handle(
+    "db:get-exercise-weekly-sets",
+    async (_event, exerciseName: string) => {
+      return db.getExerciseWeeklySets(exerciseName);
+    },
+  );
+
+  ipcMain.handle("db:get-session-prs", async (_event, exerciseName: string) => {
+    return db.getAllSessionPRs(exerciseName);
+  });
+
+  ipcMain.handle("db:get-weekly-prs", async (_event, exerciseName: string) => {
+    return db.getWeeklyPRs(exerciseName);
   });
 
   return db;

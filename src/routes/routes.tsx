@@ -1,9 +1,10 @@
 import { createHashRouter } from "react-router-dom";
 import React from "react";
 import NotFound from "./NotFound";
-import Home from "../components/home";
+import Home from "../components/pages/home";
 import DataGridDemo from "../components/pages/tagExecises";
 import Layout from "../components/layout/Layout";
+import Analyse from "../components/pages/analyse/analyse";
 
 export const router = createHashRouter([
   {
@@ -27,8 +28,12 @@ export const router = createHashRouter([
             element: <DataGridDemo />,
           },
           {
-            path: "*",
-            element: <NotFound />,
+            path: "tag",
+            element: <DataGridDemo />,
+          },
+          {
+            path: "analyse",
+            element: <Analyse />,
           },
         ],
       },

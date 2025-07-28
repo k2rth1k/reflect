@@ -1,6 +1,7 @@
 import React, { JSX } from "react";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import LabelImportantIcon from "@mui/icons-material/LabelImportant";
+import InsightsIcon from "@mui/icons-material/Insights";
 
 export interface MenuItems {
   link: string;
@@ -18,5 +19,10 @@ export const MENU: MenuItems[] = [
     link: "/tag",
     itemName: "Tag Exercise",
     icon: <LabelImportantIcon></LabelImportantIcon>,
+  },
+  {
+    link: "/analyse",
+    itemName: "Analyse",
+    icon: <InsightsIcon></InsightsIcon>,
   },
 ];

@@ -1,13 +1,15 @@
 import Database from "better-sqlite3";
 import { createRawDataTable } from "./ddl";
-import { all_weekly_sets } from "./Queries/all_weekly_sets";
-import { exercise_weekly_sets } from "./Queries/benchpress_weekly_sets";
-import { ExercisesInfo, WeeklySets } from "./queryTypes";
+import { all_weekly_sets } from "./Queries/weekly_level/all_weekly_sets";
+import { exercise_weekly_sets } from "./Queries/weekly_level/exercise_weekly_sets";
+import { ExercisesInfo, SessionPR, WeeklySets } from "./queryTypes";
 import { ExerciseSets } from "./queryTypes";
 import path from "path";
 import { app } from "electron";
 import log from "electron-log/main";
 import fs from "fs";
+import { pr_for_exercise_session_wise } from "./Queries/session_level/session_PRs_for_a_exercise";
+import { WEEKLY_LEVEL_EXERCISE_1RM } from "./Queries/weekly_level/exercise_1rm";
 // Define interfaces for your data
 export interface User {
   id?: number;
@@ -42,9 +44,6 @@ class DatabaseService {
 
     // Enable foreign keys
     this.db.pragma("foreign_keys = ON");
-
-    
-    
 
     this.createStrongTable();
   }
@@ -121,12 +120,12 @@ class DatabaseService {
 
       insertMany(workoutData);
       console.log(`Inserted ${workoutData.length} workout records`);
-      
+
       if (process.env.NODE_ENV === "development") {
-        const fileDbPath = __dirname+ "/mydatabase.db";
-        console.log("backup_file_here: ",fileDbPath)
+        const fileDbPath = __dirname + "/mydatabase.db";
+        console.log("backup_file_here: ", fileDbPath);
         this.db.backup(fileDbPath);
-    }
+      }
     } catch (error) {
       console.error("Error creating workout table or importing data:", error);
     }
@@ -157,6 +156,16 @@ class DatabaseService {
   getAllWeeklySets(): WeeklySets[] {
     const select = this.db.prepare(all_weekly_sets);
     return select.all() as WeeklySets[];
+  }
+
+  getAllSessionPRs(exerciseName: string): SessionPR[] {
+    const select = this.db.prepare(pr_for_exercise_session_wise);
+    return select.all(exerciseName) as SessionPR[];
+  }
+
+  getWeeklyPRs(exerciseName: string): SessionPR[] {
+    const select = this.db.prepare(WEEKLY_LEVEL_EXERCISE_1RM);
+    return select.all(exerciseName, exerciseName) as SessionPR[];
   }
 
   // Close database connection
