@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { chartData, CustomLineChart } from "./Charts/CustomLineChart";
-import { DarkTheme } from "../utils/themeColors";
+import { chartData, CustomLineChart } from "../Charts/CustomLineChart";
+import { DarkTheme } from "../../utils/themeColors";
 
 function Home() {
   const [data, setData] = useState<chartData>({ x: [], y: [] });
-  const [benchData, setBenchData] = useState<chartData>({ x: [], y: [] })
+  const [benchData, setBenchData] = useState<chartData>({ x: [], y: [] });
   useEffect(() => {
     let xAxis: number[] = [];
     let yAxis: number[] = [];
@@ -17,22 +17,21 @@ function Home() {
       setData({ x: xAxis, y: yAxis });
     });
 
-    
-    window.electronAPI.getExerciseWeeklySets("Bench Press (Smith Machine)").then((res) => {
-      xAxis  = [];
-      yAxis = [];
-      res.forEach((val) => {
-        xAxis.push(val.week_number);
-        yAxis.push(val.sets);
+    window.electronAPI
+      .getExerciseWeeklySets("Bench Press (Smith Machine)")
+      .then((res) => {
+        xAxis = [];
+        yAxis = [];
+        res.forEach((val) => {
+          xAxis.push(val.week_number);
+          yAxis.push(val.sets);
+        });
+        console.log({ x: xAxis, y: yAxis });
+        setBenchData({ x: xAxis, y: yAxis });
       });
-      console.log({ x: xAxis, y: yAxis });
-      setBenchData({ x: xAxis, y: yAxis });
-    });
-
   }, []);
 
   return (
-
     <>
       <div
         style={{

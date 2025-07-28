@@ -8,6 +8,11 @@ export interface chartData {
 }
 
 export function CustomLineChart({ data }: { data: chartData }) {
+  // Find the max value in y and set y-axis max just above it
+  const maxY = Math.max(...data.y);
+  // Add a small buffer (e.g., 15% of max or at least 1)
+  const yMax = maxY + Math.max(maxY * 0.15, 1);
+  // Always draw 3 horizontal grid lines (3 ticks)
   return (
     <LineChart
       colors={[DarkTheme.primary]}
@@ -26,6 +31,7 @@ export function CustomLineChart({ data }: { data: chartData }) {
             fill: DarkTheme.regularText,
             fontSize: 12,
           },
+          max: yMax,
         },
       ]}
       series={[
@@ -70,8 +76,8 @@ export function CustomLineChart({ data }: { data: chartData }) {
             "#1e1e1e" /* Adjust to match your DarkTheme.cardPrimary */ /* Modern glass effect */,
         },
       }}
-      height={300}
-      width={700}
+      height={220}
+      width={520}
       slotProps={{
         tooltip: {
           sx: {

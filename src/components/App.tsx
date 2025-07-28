@@ -9,7 +9,7 @@ function App() {
   useEffect(() => {
     window.electronAPI.getAllWeeklySets().then((data) => console.log(data));
   }, []);
-  console.log("App rendered");
+
   return (
     <div>
       <h1>Hello from React with TypeScript!</h1>
