@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider } from "react-router";
 import { router } from "../routes/routes";
-import Layout from "./layout/Layout";
 
 function App() {
   useEffect(() => {

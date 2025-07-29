@@ -1,15 +1,16 @@
 import Database from "better-sqlite3";
-import { createRawDataTable } from "./ddl";
-import { all_weekly_sets } from "./Queries/weekly_level/all_weekly_sets";
-import { exercise_weekly_sets } from "./Queries/weekly_level/exercise_weekly_sets";
-import { ExercisesInfo, SessionPR, WeeklySets } from "./queryTypes";
+import { createRawDataTable, createTagsTable } from "./ddl";
+import { all_weekly_sets } from "./Queries/Read/weekly_level/all_weekly_sets";
+import { exercise_weekly_sets } from "./Queries/Read/weekly_level/exercise_weekly_sets";
+import { Exercises, ExerciseName, SessionPR, WeeklySets } from "./queryTypes";
 import { ExerciseSets } from "./queryTypes";
 import path from "path";
 import { app } from "electron";
 import log from "electron-log/main";
 import fs from "fs";
-import { pr_for_exercise_session_wise } from "./Queries/session_level/session_PRs_for_a_exercise";
-import { WEEKLY_LEVEL_EXERCISE_1RM } from "./Queries/weekly_level/exercise_1rm";
+import { pr_for_exercise_session_wise } from "./Queries/Read/session_level/session_PRs_for_a_exercise";
+import { WEEKLY_LEVEL_EXERCISE_1RM } from "./Queries/Read/weekly_level/exercise_1rm";
+import { getAllExerciseInfo, insertExerciseInfo, updateExerciseInfo } from "./Queries/repos/Exercises";
 // Define interfaces for your data
 export interface User {
   id?: number;
@@ -40,12 +41,15 @@ class DatabaseService {
   private db: Database.Database;
 
   constructor() {
-    this.db = new Database(":memory:");
+    log.info("Initializing DatabaseService", this.db);
+    if (!this.db) {
+      this.db = new Database(":memory:");
 
-    // Enable foreign keys
-    this.db.pragma("foreign_keys = ON");
+      // Enable foreign keys
+      this.db.pragma("foreign_keys = ON");
 
-    this.createStrongTable();
+      this.createStrongTable();
+    }
   }
 
   // Update your createStrongTable method
@@ -54,7 +58,7 @@ class DatabaseService {
       const createWorkoutTable = this.db.prepare(createRawDataTable);
 
       createWorkoutTable.run();
-      console.log("Workout raw table created successfully");
+      log.info("Workout table created successfully");
 
       // In production, use the bundled path
       log.info(process.resourcesPath);
@@ -112,23 +116,60 @@ class DatabaseService {
               parseFloat(values[8]) || 0, // seconds
               values[9] || null, // notes
               values[10] || null, // workout_notes
-              parseInt(values[11]) || null, // rpe
+              parseInt(values[11]) || null // rpe
             ]);
           }
         }
       }
 
       insertMany(workoutData);
-      console.log(`Inserted ${workoutData.length} workout records`);
+      log.info(`Inserted ${workoutData.length} workout records`);
 
-      if (process.env.NODE_ENV === "development") {
-        const fileDbPath = __dirname + "/mydatabase.db";
-        console.log("backup_file_here: ", fileDbPath);
-        this.db.backup(fileDbPath);
-      }
+      this.createTagsTable();
+
+      this.backupDatabase();
+
     } catch (error) {
-      console.error("Error creating workout table or importing data:", error);
+      log.error("Error Initializing tables or importing data:", error);
     }
+  }
+
+  private backupDatabase() {
+    if (process.env.NODE_ENV === "development") {
+      const fileDbPath = __dirname + "/mydatabase.db";
+      console.log("backup_file_here: ", fileDbPath);
+      this.db.backup(fileDbPath);
+    }
+
+    log.info("Database backup created successfully");
+  }
+
+  private createTagsTable() {
+    const createTagsTableStmt = this.db.prepare(createTagsTable);
+    createTagsTableStmt.run();
+    log.info("Exercise tags table created successfully");
+
+    const stmt = this.db.prepare(insertExerciseInfo);
+
+    // Insert data in transaction for better performance
+    const upsert = this.db.transaction((data: any[]) => {
+      for (const row of data) {
+        stmt.run(...row);
+      }
+    });
+
+    const data: any[] = [];
+    this.getAllExercises().forEach((e, idx) => {
+      data.push([e.exercise_name, "[]", "[]"])
+    });
+    // Insert or update the exercise info   
+    log.info("Upserting exercise info");
+    log.info("Data to upsert:", data);
+    upsert(data);
+
+
+    log.info("get all data", this.db.prepare(getAllExerciseInfo).all());
+    this.backupDatabase();
   }
 
   // Get all users
@@ -146,11 +187,11 @@ class DatabaseService {
     return select.all(exerciseName, exerciseName) as ExerciseSets[];
   }
 
-  getAllExercises(): ExercisesInfo[] {
+  getAllExercises(): ExerciseName[] {
     const select = this.db.prepare(
       "select distinct exercise_name from workout_raw",
     );
-    return select.all() as ExercisesInfo[];
+    return select.all() as ExerciseName[];
   }
 
   getAllWeeklySets(): WeeklySets[] {
@@ -166,6 +207,48 @@ class DatabaseService {
   getWeeklyPRs(exerciseName: string): SessionPR[] {
     const select = this.db.prepare(WEEKLY_LEVEL_EXERCISE_1RM);
     return select.all(exerciseName, exerciseName) as SessionPR[];
+  }
+
+  updateExerciseTags(
+    exerciseName: string,
+    tags: string[],
+  ): void {
+
+    log.info(`Updating exercise: ${exerciseName} with  tags: ${tags}`);
+
+    const muscleGroupJson = JSON.stringify([]);
+    const tagsJson = JSON.stringify(tags);
+
+    const stmt = this.db.prepare(updateExerciseInfo);
+    stmt.run(muscleGroupJson, tagsJson, exerciseName);
+
+    log.info(`Updated exercise: ${exerciseName} with muscle_group: ${muscleGroupJson} and tags: ${tagsJson}`);
+
+    log.info("get all data", this.db.prepare(getAllExerciseInfo).all());
+    this.backupDatabase();
+  }
+
+  getAllExerciseDetails(): Exercises[] {
+    const select = this.db.prepare(getAllExerciseInfo);
+    const rows = select.all() as any[];
+    // Parse muscle_groups and tags as string[]
+
+    log.info("get all data", rows);
+    const result: Exercises[] = rows.map(row => ({
+      exercise_name: row.exercise_name,
+      muscle_group: this.parseArray(row.muscle_group as string), // Ensure muscle_group is parsed correctly
+      tags: this.parseArray(row.tags as string), // Ensure tags are parsed correctly,
+    }));
+
+    return result;
+  }
+
+  private parseArray(jsonArrayString: string): string[] {
+    try {
+      return JSON.parse(jsonArrayString || '[]');
+    } catch {
+      return [];
+    }
   }
 
   // Close database connection
