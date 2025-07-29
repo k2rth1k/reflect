@@ -11,7 +11,7 @@ export interface ExerciseSets {
   sets: number;
 }
 
-export interface ExercisesInfo {
+export interface ExerciseName {
   /**/ exercise_name: string;
 }
 
@@ -22,4 +22,10 @@ export interface SessionPR {
   reps: number;
   pr_1rm: number;
   session_number: number;
+}
+
+export interface Exercises {
+  exercise_name: string;
+  muscle_group: string[];
+  tags: string[];
 }

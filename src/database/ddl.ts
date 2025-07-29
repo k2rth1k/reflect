@@ -14,3 +14,10 @@ export const createRawDataTable = `
                         rpe INTEGER,
                         muscle Varchar(255))
                         `;
+
+export const createTagsTable = `
+                    CREATE TABLE IF NOT EXISTS exercises (
+                        exercise_name TEXT PRIMARY KEY, 
+                        muscle_group TEXT,      
+                        tags TEXT
+                    )`;
