@@ -30,5 +30,5 @@ import "./index.css";
 import "./components/App";
 
 console.log(
-  '👋 This text is being logged by "renderer.js", included via webpack',
+  "👋 This text is being logged by \"renderer.js\", included via webpack"
 );

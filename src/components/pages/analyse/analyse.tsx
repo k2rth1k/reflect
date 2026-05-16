@@ -1,7 +1,7 @@
 import * as React from "react";
+import { useEffect, useState } from "react";
 import { DarkTheme } from "../../../utils/themeColors";
 import { chartData, CustomLineChart } from "../../Charts/CustomLineChart";
-import { useEffect, useState } from "react";
 
 export default function Analyse(): React.JSX.Element {
   const [benchData, setBenchData] = useState<chartData>({ x: [], y: [] });
@@ -57,7 +57,7 @@ export default function Analyse(): React.JSX.Element {
           height: "fit-content",
           borderRadius: "1em",
           paddingBottom: "0.5em",
-          width: "fit-content",
+          width: "fit-content"
         }}
       >
         <h2 style={{ color: DarkTheme.boldText, marginLeft: "1.5em" }}>
@@ -73,7 +73,7 @@ export default function Analyse(): React.JSX.Element {
           height: "fit-content",
           borderRadius: "1em",
           paddingBottom: "0.5em",
-          width: "fit-content",
+          width: "fit-content"
         }}
       >
         <h2 style={{ color: DarkTheme.boldText, marginLeft: "1.5em" }}>
@@ -89,7 +89,7 @@ export default function Analyse(): React.JSX.Element {
           height: "fit-content",
           borderRadius: "1em",
           paddingBottom: "0.5em",
-          width: "fit-content",
+          width: "fit-content"
         }}
       >
         <h2 style={{ color: DarkTheme.boldText, marginLeft: "1.5em" }}>

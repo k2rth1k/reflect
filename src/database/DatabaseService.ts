@@ -19,6 +19,7 @@ export interface User {
   age: number;
   created_at?: string;
 }
+
 // Add this interface for the workout data
 export interface WorkoutData {
   id?: number;
@@ -78,9 +79,10 @@ class DatabaseService {
 
       // Prepare insert statement
       const insertWorkout = this.db.prepare(`
-                INSERT INTO workout_raw (date, workout_name, duration, exercise_name, set_order, weight, reps, distance, seconds, notes, workout_notes, rpe, muscle)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,'')
-            `);
+        INSERT INTO workout_raw (date, workout_name, duration, exercise_name, set_order, weight, reps, distance,
+                                 seconds, notes, workout_notes, rpe, muscle)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '')
+      `);
 
       // Insert data in transaction for better performance
       const insertMany = this.db.transaction((data: any[]) => {
@@ -116,7 +118,7 @@ class DatabaseService {
               parseFloat(values[8]) || 0, // seconds
               values[9] || null, // notes
               values[10] || null, // workout_notes
-              parseInt(values[11]) || null, // rpe
+              parseInt(values[11]) || null // rpe
             ]);
           }
         }
@@ -131,6 +133,78 @@ class DatabaseService {
     } catch (error) {
       log.error("Error Initializing tables or importing data:", error);
     }
+  }
+
+  // Get all users
+  getAllWorkoutData(): WorkoutData[] {
+    const select = this.db.prepare("SELECT * FROM workout_raw");
+    return select.all() as WorkoutData[];
+  }
+
+  /**
+   * Get weekly sets for a given exercise name.
+   * @param exerciseName The exercise name to filter by
+   */
+  getExerciseWeeklySets(exerciseName: string): ExerciseSets[] {
+    const select = this.db.prepare(exercise_weekly_sets);
+    return select.all(exerciseName, exerciseName) as ExerciseSets[];
+  }
+
+  getAllExercises(): ExerciseName[] {
+    const select = this.db.prepare(
+      "select distinct exercise_name from workout_raw"
+    );
+    return select.all() as ExerciseName[];
+  }
+
+  getAllWeeklySets(): WeeklySets[] {
+    const select = this.db.prepare(all_weekly_sets);
+    return select.all() as WeeklySets[];
+  }
+
+  getAllSessionPRs(exerciseName: string): SessionPR[] {
+    const select = this.db.prepare(pr_for_exercise_session_wise);
+    return select.all(exerciseName) as SessionPR[];
+  }
+
+  getWeeklyPRs(exerciseName: string): SessionPR[] {
+    const select = this.db.prepare(WEEKLY_LEVEL_EXERCISE_1RM);
+    return select.all(exerciseName, exerciseName) as SessionPR[];
+  }
+
+  updateExerciseTags(exerciseName: string, tags: string[]): void {
+    log.info(`Updating exercise: ${exerciseName} with  tags: ${tags}`);
+
+    const muscleGroupJson = JSON.stringify([]);
+    const tagsJson = JSON.stringify(tags);
+
+    const stmt = this.db.prepare(updateExerciseInfo);
+    stmt.run(muscleGroupJson, tagsJson, exerciseName);
+
+    log.info(
+      `Updated exercise: ${exerciseName} with muscle_group: ${muscleGroupJson} and tags: ${tagsJson}`
+    );
+
+    log.info("get all data", this.db.prepare(getAllExerciseInfo).all());
+    this.backupDatabase();
+  }
+
+  getAllExerciseDetails(): Exercises[] {
+    const select = this.db.prepare(getAllExerciseInfo);
+    const rows = select.all() as any[];
+    // Parse muscle_groups and tags as string[]
+
+    log.info("get all data", rows);
+    return rows.map((row) => ({
+      exercise_name: row.exercise_name,
+      muscle_group: this.parseArray(row.muscle_group as string), // Ensure muscle_group is parsed correctly
+      tags: this.parseArray(row.tags as string) // Ensure tags are parsed correctly,
+    }));
+  }
+
+  // Close database connection
+  close(): void {
+    this.db.close();
   }
 
   private backupDatabase() {
@@ -170,84 +244,12 @@ class DatabaseService {
     this.backupDatabase();
   }
 
-  // Get all users
-  getAllWorkoutData(): WorkoutData[] {
-    const select = this.db.prepare("SELECT * FROM workout_raw");
-    return select.all() as WorkoutData[];
-  }
-
-  /**
-   * Get weekly sets for a given exercise name.
-   * @param exerciseName The exercise name to filter by
-   */
-  getExerciseWeeklySets(exerciseName: string): ExerciseSets[] {
-    const select = this.db.prepare(exercise_weekly_sets);
-    return select.all(exerciseName, exerciseName) as ExerciseSets[];
-  }
-
-  getAllExercises(): ExerciseName[] {
-    const select = this.db.prepare(
-      "select distinct exercise_name from workout_raw",
-    );
-    return select.all() as ExerciseName[];
-  }
-
-  getAllWeeklySets(): WeeklySets[] {
-    const select = this.db.prepare(all_weekly_sets);
-    return select.all() as WeeklySets[];
-  }
-
-  getAllSessionPRs(exerciseName: string): SessionPR[] {
-    const select = this.db.prepare(pr_for_exercise_session_wise);
-    return select.all(exerciseName) as SessionPR[];
-  }
-
-  getWeeklyPRs(exerciseName: string): SessionPR[] {
-    const select = this.db.prepare(WEEKLY_LEVEL_EXERCISE_1RM);
-    return select.all(exerciseName, exerciseName) as SessionPR[];
-  }
-
-  updateExerciseTags(exerciseName: string, tags: string[]): void {
-    log.info(`Updating exercise: ${exerciseName} with  tags: ${tags}`);
-
-    const muscleGroupJson = JSON.stringify([]);
-    const tagsJson = JSON.stringify(tags);
-
-    const stmt = this.db.prepare(updateExerciseInfo);
-    stmt.run(muscleGroupJson, tagsJson, exerciseName);
-
-    log.info(
-      `Updated exercise: ${exerciseName} with muscle_group: ${muscleGroupJson} and tags: ${tagsJson}`,
-    );
-
-    log.info("get all data", this.db.prepare(getAllExerciseInfo).all());
-    this.backupDatabase();
-  }
-
-  getAllExerciseDetails(): Exercises[] {
-    const select = this.db.prepare(getAllExerciseInfo);
-    const rows = select.all() as any[];
-    // Parse muscle_groups and tags as string[]
-
-    log.info("get all data", rows);
-    return rows.map((row) => ({
-      exercise_name: row.exercise_name,
-      muscle_group: this.parseArray(row.muscle_group as string), // Ensure muscle_group is parsed correctly
-      tags: this.parseArray(row.tags as string), // Ensure tags are parsed correctly,
-    }));
-  }
-
   private parseArray(jsonArrayString: string): string[] {
     try {
       return JSON.parse(jsonArrayString || "[]");
     } catch {
       return [];
     }
-  }
-
-  // Close database connection
-  close(): void {
-    this.db.close();
   }
 }
 

@@ -19,7 +19,7 @@ const style = {
   height: 450,
   bgcolor: "background.paper",
   boxShadow: 24,
-  p: 4,
+  p: 4
 };
 
 interface Exercise {
@@ -32,7 +32,7 @@ export default function DataGridDemo() {
   const [exercises, setExercises] = React.useState<Exercise[]>([]);
   const [open, setOpen] = React.useState(false);
   const [selectedExercise, setSelectedExercise] = React.useState<string | null>(
-    null,
+    null
   );
   const [tagInput, setTagInput] = React.useState("");
   const handleOpen = (exerciseName?: string) => {
@@ -51,7 +51,7 @@ export default function DataGridDemo() {
       headerName: "Exercise",
       headerAlign: "center",
       align: "center",
-      width: 200,
+      width: 200
     },
     {
       field: "muscle_group",
@@ -78,7 +78,7 @@ export default function DataGridDemo() {
                 minHeight: 70,
                 padding: 0.5,
                 gap: 0.5,
-                scrollBehavior: "smooth",
+                scrollBehavior: "smooth"
               }}
             >
               {params.row.muscle_group.map((val, idx) => (
@@ -95,7 +95,7 @@ export default function DataGridDemo() {
                     textOverflow: "ellipsis",
                     backgroundColor: DarkTheme.cardPrimary,
                     color: DarkTheme.boldText,
-                    border: `1px solid ${DarkTheme.separatingLineColor}`,
+                    border: `1px solid ${DarkTheme.separatingLineColor}`
                   }}
                   onClick={() => null}
                 />
@@ -106,7 +106,7 @@ export default function DataGridDemo() {
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "center",
-                height: "100%",
+                height: "100%"
               }}
             >
               <Button
@@ -120,7 +120,7 @@ export default function DataGridDemo() {
                   justifyContent: "center",
                   display: "flex",
                   flexDirection: "row",
-                  color: "white",
+                  color: "white"
                 }}
                 onClick={() => {
                   handleOpen(params.row.exercise_name);
@@ -131,8 +131,8 @@ export default function DataGridDemo() {
             </div>
           </div>
         );
-      },
-    },
+      }
+    }
   ];
 
   useEffect(() => {
@@ -143,9 +143,9 @@ export default function DataGridDemo() {
           return {
             id: idx,
             exercise_name: e.exercise_name,
-            muscle_group: e.tags, // Ensure tags are trimmed
+            muscle_group: e.tags // Ensure tags are trimmed
           };
-        }),
+        })
       );
     });
   }, []);
@@ -158,43 +158,43 @@ export default function DataGridDemo() {
         rowHeight={80}
         sx={{
           "& .MuiDataGrid-columnHeader": {
-            backgroundColor: DarkTheme.cardPrimary, // Adjust color and thickness as needed
+            backgroundColor: DarkTheme.cardPrimary // Adjust color and thickness as needed
           },
           "& .MuiDataGrid-cell": {
-            borderRight: `1px solid ${DarkTheme.separatingLineColor}`, // Adjust color and thickness as needed
+            borderRight: `1px solid ${DarkTheme.separatingLineColor}` // Adjust color and thickness as needed
           },
           "& .MuiTablePagination-actions": {
-            color: DarkTheme.boldText,
+            color: DarkTheme.boldText
           },
           "& .MuiTablePagination-selectLabel": {
-            color: DarkTheme.boldText,
+            color: DarkTheme.boldText
           },
           "& .MuiTablePagination-select": {
-            color: DarkTheme.boldText,
+            color: DarkTheme.boldText
           },
           "& .MuiTablePagination-displayedRows": {
-            color: DarkTheme.boldText,
+            color: DarkTheme.boldText
           },
           "& .MuiDataGrid-row:hover": {
-            backgroundColor: DarkTheme.hover,
+            backgroundColor: DarkTheme.hover
           },
           "& .MuiDataGrid-row": {
-            borderBottom: `0px solid ${DarkTheme.separatingLineColor}`,
+            borderBottom: `0px solid ${DarkTheme.separatingLineColor}`
           },
           "& .MuiDataGrid-cell:last-child": {
-            borderRight: "none", // Remove border on the last cell
+            borderRight: "none" // Remove border on the last cell
           },
           border: `1px solid ${DarkTheme.separatingLineColor}`,
           backgroundColor: DarkTheme.cardPrimary,
-          color: DarkTheme.boldText,
+          color: DarkTheme.boldText
         }}
         initialState={{
           pagination: {
             paginationModel: {
               pageSize: 8,
-              page: 0,
-            },
-          },
+              page: 0
+            }
+          }
         }}
         pageSizeOptions={[5, 8, 10, 12]}
         disableRowSelectionOnClick
@@ -208,8 +208,8 @@ export default function DataGridDemo() {
         slots={{ backdrop: Backdrop }}
         slotProps={{
           backdrop: {
-            timeout: 500,
-          },
+            timeout: 500
+          }
         }}
       >
         <Fade in={open}>
@@ -223,7 +223,7 @@ export default function DataGridDemo() {
                 if (selectedExercise && tagInput.trim() !== "") {
                   // Get the exercise object
                   const exercise = exercises.find(
-                    (ex) => ex.exercise_name === selectedExercise,
+                    (ex) => ex.exercise_name === selectedExercise
                   );
                   if (exercise) {
                     // Add the tag to the muscle_group array
@@ -231,15 +231,15 @@ export default function DataGridDemo() {
                     // Update backend
                     await window.electronAPI.upsertExerciseTags(
                       selectedExercise,
-                      newTags,
+                      newTags
                     );
                     // Update local state
                     setExercises(
                       exercises.map((ex) =>
                         ex.exercise_name === selectedExercise
                           ? { ...ex, muscle_group: newTags }
-                          : ex,
-                      ),
+                          : ex
+                      )
                     );
                   }
                   setTagInput("");
@@ -259,7 +259,7 @@ export default function DataGridDemo() {
                   border: `1px solid ${DarkTheme.separatingLineColor}`,
                   backgroundColor: DarkTheme.cardPrimary,
                   color: DarkTheme.boldText,
-                  marginBottom: "1em",
+                  marginBottom: "1em"
                 }}
               />
               <Button
@@ -290,28 +290,28 @@ export default function DataGridDemo() {
                           "& .MuiChip-deleteIcon": {
                             color: "red",
                             "&:hover": {
-                              color: "darkred",
-                            },
-                          },
+                              color: "darkred"
+                            }
+                          }
                         }}
                         onDelete={async () => {
                           const exercise = exercises.find(
-                            (ex) => ex.exercise_name === selectedExercise,
+                            (ex) => ex.exercise_name === selectedExercise
                           );
                           if (exercise) {
                             const newTags = exercise.muscle_group.filter(
-                              (t, i) => i !== idx,
+                              (t, i) => i !== idx
                             );
                             await window.electronAPI.upsertExerciseTags(
                               selectedExercise,
-                              newTags,
+                              newTags
                             );
                             setExercises(
                               exercises.map((ex) =>
                                 ex.exercise_name === selectedExercise
                                   ? { ...ex, muscle_group: newTags }
-                                  : ex,
-                              ),
+                                  : ex
+                              )
                             );
                           }
                         }}

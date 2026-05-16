@@ -39,7 +39,7 @@ function Home() {
           backgroundColor: DarkTheme.cardPrimary,
           height: "fit-content",
           borderRadius: "1em",
-          paddingBottom: "0.5em",
+          paddingBottom: "0.5em"
         }}
       >
         <h2 style={{ color: DarkTheme.boldText, marginLeft: "1.5em" }}>
@@ -54,7 +54,7 @@ function Home() {
           backgroundColor: DarkTheme.cardPrimary,
           height: "fit-content",
           borderRadius: "1em",
-          paddingBottom: "0.5em",
+          paddingBottom: "0.5em"
         }}
       >
         <h2 style={{ color: DarkTheme.boldText, marginLeft: "1.5em" }}>

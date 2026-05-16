@@ -61,7 +61,7 @@ const Layout: React.FC<LayoutProps> = () => {
             marginBottom: "1em",
             paddingBottom: "0.4em",
             width: "100%",
-            overflowY: "auto",
+            overflowY: "auto"
           }}
         >
           <Outlet />

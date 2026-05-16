@@ -1,11 +1,5 @@
 import { WorkoutData } from "./database/DatabaseService";
-import {
-  ExerciseName,
-  WeeklySets,
-  ExerciseSets,
-  SessionPR,
-  Exercises,
-} from "./database/queryTypes";
+import { ExerciseName, Exercises, ExerciseSets, SessionPR, WeeklySets } from "./database/queryTypes";
 
 declare global {
   interface Window {
@@ -18,7 +12,7 @@ declare global {
       getWeeklyPRs: (exerciseName: string) => Promise<WeeklySets[]>;
       upsertExerciseTags: (
         exerciseName: string,
-        tags: string[],
+        tags: string[]
       ) => Promise<boolean>;
       getAllExerciseDetails: () => Promise<Exercises[]>;
     };

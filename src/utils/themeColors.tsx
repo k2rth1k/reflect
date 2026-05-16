@@ -26,5 +26,5 @@ export const DarkTheme: ThemeColors = {
   primaryHover: "#0c0c0c",
   elementBorder: "#424242",
   hover: "#424242",
-  separatingLineColor: "#434343",
+  separatingLineColor: "#434343"
 };

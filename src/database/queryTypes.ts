@@ -12,7 +12,8 @@ export interface ExerciseSets {
 }
 
 export interface ExerciseName {
-  /**/ exercise_name: string;
+  /**/
+  exercise_name: string;
 }
 
 export interface SessionPR {
