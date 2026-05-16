@@ -2,19 +2,15 @@ import Database from "better-sqlite3";
 import { createRawDataTable, createTagsTable } from "./ddl";
 import { all_weekly_sets } from "./Queries/Read/weekly_level/all_weekly_sets";
 import { exercise_weekly_sets } from "./Queries/Read/weekly_level/exercise_weekly_sets";
-import { Exercises, ExerciseName, SessionPR, WeeklySets } from "./queryTypes";
-import { ExerciseSets } from "./queryTypes";
+import { ExerciseName, Exercises, ExerciseSets, SessionPR, WeeklySets } from "./queryTypes";
 import path from "path";
 import { app } from "electron";
 import log from "electron-log/main";
 import fs from "fs";
 import { pr_for_exercise_session_wise } from "./Queries/Read/session_level/session_PRs_for_a_exercise";
 import { WEEKLY_LEVEL_EXERCISE_1RM } from "./Queries/Read/weekly_level/exercise_1rm";
-import {
-  getAllExerciseInfo,
-  insertExerciseInfo,
-  updateExerciseInfo,
-} from "./Queries/repos/Exercises";
+import { getAllExerciseInfo, insertExerciseInfo, updateExerciseInfo } from "./Queries/repos/Exercises";
+
 // Define interfaces for your data
 export interface User {
   id?: number;
@@ -42,7 +38,7 @@ export interface WorkoutData {
 }
 
 class DatabaseService {
-  private db: Database.Database;
+  private readonly db: Database.Database;
 
   constructor() {
     log.info("Initializing DatabaseService", this.db);
@@ -66,7 +62,7 @@ class DatabaseService {
 
       // In production, use the bundled path
       log.info(process.resourcesPath);
-      let resourcesPath = "";
+      let resourcesPath: string;
       console.log("look here", __dirname);
       if (process.env.NODE_ENV === "development") {
         console.log(__dirname);
@@ -234,13 +230,11 @@ class DatabaseService {
     // Parse muscle_groups and tags as string[]
 
     log.info("get all data", rows);
-    const result: Exercises[] = rows.map((row) => ({
+    return rows.map((row) => ({
       exercise_name: row.exercise_name,
       muscle_group: this.parseArray(row.muscle_group as string), // Ensure muscle_group is parsed correctly
       tags: this.parseArray(row.tags as string), // Ensure tags are parsed correctly,
     }));
-
-    return result;
   }
 
   private parseArray(jsonArrayString: string): string[] {
@@ -261,5 +255,3 @@ class DatabaseService {
 export function initializeDatabase(): DatabaseService {
   return new DatabaseService();
 }
-
-export default DatabaseService;
