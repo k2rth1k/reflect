@@ -16,7 +16,10 @@ declare global {
       getExerciseWeeklySets: (exerciseName: string) => Promise<ExerciseSets[]>;
       getAllSessionPRs: (exerciseName: string) => Promise<SessionPR[]>;
       getWeeklyPRs: (exerciseName: string) => Promise<WeeklySets[]>;
-      upsertExerciseTags: (exerciseName: string, tags: string[]) => Promise<boolean>;
+      upsertExerciseTags: (
+        exerciseName: string,
+        tags: string[],
+      ) => Promise<boolean>;
       getAllExerciseDetails: () => Promise<Exercises[]>;
     };
   }

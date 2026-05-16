@@ -82,10 +82,13 @@ function StartDB() {
     return db.getWeeklyPRs(exerciseName);
   });
 
-  ipcMain.handle("db:upsert-exercise-tags", async (_event, exerciseName: string, tags: string[]) => {
-    db.updateExerciseTags(exerciseName, tags);
-    return true;
-  });
+  ipcMain.handle(
+    "db:upsert-exercise-tags",
+    async (_event, exerciseName: string, tags: string[]) => {
+      db.updateExerciseTags(exerciseName, tags);
+      return true;
+    },
+  );
 
   ipcMain.handle("db:get-all-exercise-details", async () => {
     return db.getAllExerciseDetails();

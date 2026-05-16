@@ -31,7 +31,9 @@ interface Exercise {
 export default function DataGridDemo() {
   const [exercises, setExercises] = React.useState<Exercise[]>([]);
   const [open, setOpen] = React.useState(false);
-  const [selectedExercise, setSelectedExercise] = React.useState<string | null>(null);
+  const [selectedExercise, setSelectedExercise] = React.useState<string | null>(
+    null,
+  );
   const [tagInput, setTagInput] = React.useState("");
   const handleOpen = (exerciseName?: string) => {
     setSelectedExercise(exerciseName || null);
@@ -206,105 +208,124 @@ export default function DataGridDemo() {
         slots={{ backdrop: Backdrop }}
         slotProps={{
           backdrop: {
-        timeout: 500,
+            timeout: 500,
           },
         }}
       >
         <Fade in={open}>
           <Box sx={style}>
-        <Typography id="transition-modal-title" variant="h6" component="h2">
-          Text in a modal
-        </Typography>
-        <form
-          onSubmit={async (e) => {
-            e.preventDefault();
-            if (selectedExercise && tagInput.trim() !== "") {
-          // Get the exercise object
-          const exercise = exercises.find(ex => ex.exercise_name === selectedExercise);
-          if (exercise) {
-            // Add the tag to the muscle_group array
-            const newTags = [...exercise.muscle_group, tagInput.trim()];
-            // Update backend
-            await window.electronAPI.upsertExerciseTags(selectedExercise, newTags);
-            // Update local state
-            setExercises(exercises.map(ex =>
-              ex.exercise_name === selectedExercise
-            ? { ...ex, muscle_group: newTags }
-            : ex
-            ));
-          }
-          setTagInput("");
-          // Do not close the modal here
-            }
-          }}
-        >
-          <input
-            type="text"
-            value={tagInput}
-            onChange={e => setTagInput(e.target.value)}
-            placeholder="Enter tag for the exercise"
-            style={{
-          width: "100%",
-          padding: "0.5em",
-          borderRadius: "0.4em",
-          border: `1px solid ${DarkTheme.separatingLineColor}`,
-          backgroundColor: DarkTheme.cardPrimary,
-          color: DarkTheme.boldText,
-          marginBottom: "1em",
-            }}
-          />
-          <Button type="submit" variant="contained" color="primary" disabled={tagInput.trim() === ""}>
-            Add Tag
-          </Button>
-        </form>
-        {selectedExercise && (
-          <Box sx={{ mt: 2 }}>
-            <Typography variant="subtitle1" sx={{ mb: 1 }}>
-          Current Tags:
+            <Typography id="transition-modal-title" variant="h6" component="h2">
+              Text in a modal
             </Typography>
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-          {exercises.find(ex => ex.exercise_name === selectedExercise)?.muscle_group.map((tag, idx) => (
-            <Chip
-              key={tag + idx}
-              label={tag}
-              sx={{
-            backgroundColor: DarkTheme.cardPrimary,
-            color: DarkTheme.boldText,
-            border: `1px solid ${DarkTheme.separatingLineColor}`,
-            "& .MuiChip-deleteIcon": {
-              color: "red",
-              "&:hover": {
-                color: "darkred",
-              },
-            },
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                if (selectedExercise && tagInput.trim() !== "") {
+                  // Get the exercise object
+                  const exercise = exercises.find(
+                    (ex) => ex.exercise_name === selectedExercise,
+                  );
+                  if (exercise) {
+                    // Add the tag to the muscle_group array
+                    const newTags = [...exercise.muscle_group, tagInput.trim()];
+                    // Update backend
+                    await window.electronAPI.upsertExerciseTags(
+                      selectedExercise,
+                      newTags,
+                    );
+                    // Update local state
+                    setExercises(
+                      exercises.map((ex) =>
+                        ex.exercise_name === selectedExercise
+                          ? { ...ex, muscle_group: newTags }
+                          : ex,
+                      ),
+                    );
+                  }
+                  setTagInput("");
+                  // Do not close the modal here
+                }
               }}
-              onDelete={async () => {
-            const exercise = exercises.find(ex => ex.exercise_name === selectedExercise);
-            if (exercise) {
-              const newTags = exercise.muscle_group.filter((t, i) => i !== idx);
-              await window.electronAPI.upsertExerciseTags(selectedExercise, newTags);
-              setExercises(exercises.map(ex =>
-                ex.exercise_name === selectedExercise
-              ? { ...ex, muscle_group: newTags }
-              : ex
-              ));
-            }
-              }}
-            />
-          ))}
+            >
+              <input
+                type="text"
+                value={tagInput}
+                onChange={(e) => setTagInput(e.target.value)}
+                placeholder="Enter tag for the exercise"
+                style={{
+                  width: "100%",
+                  padding: "0.5em",
+                  borderRadius: "0.4em",
+                  border: `1px solid ${DarkTheme.separatingLineColor}`,
+                  backgroundColor: DarkTheme.cardPrimary,
+                  color: DarkTheme.boldText,
+                  marginBottom: "1em",
+                }}
+              />
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                disabled={tagInput.trim() === ""}
+              >
+                Add Tag
+              </Button>
+            </form>
+            {selectedExercise && (
+              <Box sx={{ mt: 2 }}>
+                <Typography variant="subtitle1" sx={{ mb: 1 }}>
+                  Current Tags:
+                </Typography>
+                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                  {exercises
+                    .find((ex) => ex.exercise_name === selectedExercise)
+                    ?.muscle_group.map((tag, idx) => (
+                      <Chip
+                        key={tag + idx}
+                        label={tag}
+                        sx={{
+                          backgroundColor: DarkTheme.cardPrimary,
+                          color: DarkTheme.boldText,
+                          border: `1px solid ${DarkTheme.separatingLineColor}`,
+                          "& .MuiChip-deleteIcon": {
+                            color: "red",
+                            "&:hover": {
+                              color: "darkred",
+                            },
+                          },
+                        }}
+                        onDelete={async () => {
+                          const exercise = exercises.find(
+                            (ex) => ex.exercise_name === selectedExercise,
+                          );
+                          if (exercise) {
+                            const newTags = exercise.muscle_group.filter(
+                              (t, i) => i !== idx,
+                            );
+                            await window.electronAPI.upsertExerciseTags(
+                              selectedExercise,
+                              newTags,
+                            );
+                            setExercises(
+                              exercises.map((ex) =>
+                                ex.exercise_name === selectedExercise
+                                  ? { ...ex, muscle_group: newTags }
+                                  : ex,
+                              ),
+                            );
+                          }
+                        }}
+                      />
+                    ))}
+                </Box>
+              </Box>
+            )}
+            {/* Close Modal Button */}
+            <Box sx={{ mt: 4, display: "flex", justifyContent: "flex-end" }}>
+              <Button variant="outlined" color="primary" onClick={handleClose}>
+                Close
+              </Button>
             </Box>
-          </Box>
-        )}
-        {/* Close Modal Button */}
-        <Box sx={{ mt: 4, display: "flex", justifyContent: "flex-end" }}>
-          <Button
-            variant="outlined"
-            color="primary"
-            onClick={handleClose}
-          >
-            Close
-          </Button>
-        </Box>
           </Box>
         </Fade>
       </Modal>

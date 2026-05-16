@@ -3,7 +3,12 @@
 
 import { contextBridge, ipcRenderer } from "electron";
 import { WorkoutData } from "./database/DatabaseService";
-import { WeeklySets, ExerciseSets, SessionPR, Exercises } from "./database/queryTypes";
+import {
+  WeeklySets,
+  ExerciseSets,
+  SessionPR,
+  Exercises,
+} from "./database/queryTypes";
 
 // Expose database API to renderer process
 contextBridge.exposeInMainWorld("electronAPI", {

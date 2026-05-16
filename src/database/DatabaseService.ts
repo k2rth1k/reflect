@@ -10,7 +10,11 @@ import log from "electron-log/main";
 import fs from "fs";
 import { pr_for_exercise_session_wise } from "./Queries/Read/session_level/session_PRs_for_a_exercise";
 import { WEEKLY_LEVEL_EXERCISE_1RM } from "./Queries/Read/weekly_level/exercise_1rm";
-import { getAllExerciseInfo, insertExerciseInfo, updateExerciseInfo } from "./Queries/repos/Exercises";
+import {
+  getAllExerciseInfo,
+  insertExerciseInfo,
+  updateExerciseInfo,
+} from "./Queries/repos/Exercises";
 // Define interfaces for your data
 export interface User {
   id?: number;
@@ -116,7 +120,7 @@ class DatabaseService {
               parseFloat(values[8]) || 0, // seconds
               values[9] || null, // notes
               values[10] || null, // workout_notes
-              parseInt(values[11]) || null // rpe
+              parseInt(values[11]) || null, // rpe
             ]);
           }
         }
@@ -128,7 +132,6 @@ class DatabaseService {
       this.createTagsTable();
 
       this.backupDatabase();
-
     } catch (error) {
       log.error("Error Initializing tables or importing data:", error);
     }
@@ -160,13 +163,12 @@ class DatabaseService {
 
     const data: any[] = [];
     this.getAllExercises().forEach((e, idx) => {
-      data.push([e.exercise_name, "[]", "[]"])
+      data.push([e.exercise_name, "[]", "[]"]);
     });
-    // Insert or update the exercise info   
+    // Insert or update the exercise info
     log.info("Upserting exercise info");
     log.info("Data to upsert:", data);
     upsert(data);
-
 
     log.info("get all data", this.db.prepare(getAllExerciseInfo).all());
     this.backupDatabase();
@@ -209,11 +211,7 @@ class DatabaseService {
     return select.all(exerciseName, exerciseName) as SessionPR[];
   }
 
-  updateExerciseTags(
-    exerciseName: string,
-    tags: string[],
-  ): void {
-
+  updateExerciseTags(exerciseName: string, tags: string[]): void {
     log.info(`Updating exercise: ${exerciseName} with  tags: ${tags}`);
 
     const muscleGroupJson = JSON.stringify([]);
@@ -222,7 +220,9 @@ class DatabaseService {
     const stmt = this.db.prepare(updateExerciseInfo);
     stmt.run(muscleGroupJson, tagsJson, exerciseName);
 
-    log.info(`Updated exercise: ${exerciseName} with muscle_group: ${muscleGroupJson} and tags: ${tagsJson}`);
+    log.info(
+      `Updated exercise: ${exerciseName} with muscle_group: ${muscleGroupJson} and tags: ${tagsJson}`,
+    );
 
     log.info("get all data", this.db.prepare(getAllExerciseInfo).all());
     this.backupDatabase();
@@ -234,7 +234,7 @@ class DatabaseService {
     // Parse muscle_groups and tags as string[]
 
     log.info("get all data", rows);
-    const result: Exercises[] = rows.map(row => ({
+    const result: Exercises[] = rows.map((row) => ({
       exercise_name: row.exercise_name,
       muscle_group: this.parseArray(row.muscle_group as string), // Ensure muscle_group is parsed correctly
       tags: this.parseArray(row.tags as string), // Ensure tags are parsed correctly,
@@ -245,7 +245,7 @@ class DatabaseService {
 
   private parseArray(jsonArrayString: string): string[] {
     try {
-      return JSON.parse(jsonArrayString || '[]');
+      return JSON.parse(jsonArrayString || "[]");
     } catch {
       return [];
     }
