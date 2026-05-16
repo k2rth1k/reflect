@@ -1,5 +1,5 @@
 import Database from "better-sqlite3";
-import { createRawDataTable, createTagsTable } from "./ddl";
+import { createMuscleGroupsTable, createRawDataTable, createTagsTable, insertMuscleGroups } from "./ddl";
 import { all_weekly_sets } from "./Queries/Read/weekly_level/all_weekly_sets";
 import { exercise_weekly_sets } from "./Queries/Read/weekly_level/exercise_weekly_sets";
 import { ExerciseName, Exercises, ExerciseSets, SessionPR, WeeklySets } from "./queryTypes";
@@ -49,12 +49,12 @@ class DatabaseService {
       // Enable foreign keys
       this.db.pragma("foreign_keys = ON");
 
-      this.createStrongTable();
+      this.setupDatabase();
     }
   }
 
   // Update your createStrongTable method
-  createStrongTable() {
+  setupDatabase() {
     try {
       const createWorkoutTable = this.db.prepare(createRawDataTable);
 
@@ -128,12 +128,23 @@ class DatabaseService {
       log.info(`Inserted ${workoutData.length} workout records`);
 
       this.createTagsTable();
+      this.createMuscleGroupsTable();
 
-      this.backupDatabase();
+      this.saveDatabase();
     } catch (error) {
       log.error("Error Initializing tables or importing data:", error);
     }
   }
+
+  createMuscleGroupsTable() {
+    const createTagsTableStmt = this.db.prepare(createMuscleGroupsTable);
+    createTagsTableStmt.run();
+    log.info("Muscle Groups table created successfully");
+
+    const insertMuscleGroupsStmt = this.db.prepare(insertMuscleGroups);
+    insertMuscleGroupsStmt.run();
+    log.info("Muscle Groups inserted successfully");
+  };
 
   // Get all users
   getAllWorkoutData(): WorkoutData[] {
@@ -186,7 +197,7 @@ class DatabaseService {
     );
 
     log.info("get all data", this.db.prepare(getAllExerciseInfo).all());
-    this.backupDatabase();
+    this.saveDatabase();
   }
 
   getAllExerciseDetails(): Exercises[] {
@@ -207,14 +218,19 @@ class DatabaseService {
     this.db.close();
   }
 
-  private backupDatabase() {
+  private saveDatabase() {
     if (process.env.NODE_ENV === "development") {
       const fileDbPath = __dirname + "/mydatabase.db";
-      console.log("backup_file_here: ", fileDbPath);
-      this.db.backup(fileDbPath);
+      if (fs.existsSync(fileDbPath)) {
+        fs.unlinkSync(fileDbPath);
+      }
+      try {
+        this.db.prepare(`VACUUM INTO '${fileDbPath}'`).run();
+        log.info("Database save completed successfully");
+      } catch (error) {
+        log.error("error while saving data", error);
+      }
     }
-
-    log.info("Database backup created successfully");
   }
 
   private createTagsTable() {
@@ -241,7 +257,7 @@ class DatabaseService {
     upsert(data);
 
     log.info("get all data", this.db.prepare(getAllExerciseInfo).all());
-    this.backupDatabase();
+    this.saveDatabase();
   }
 
   private parseArray(jsonArrayString: string): string[] {

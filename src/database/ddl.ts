@@ -24,3 +24,35 @@ export const createTagsTable = `
     muscle_group  TEXT,
     tags          TEXT
   )`;
+
+export const createMuscleGroupsTable = `
+  CREATE TABLE IF NOT EXISTS muscle_groups
+  (
+    muscle_group TEXT
+  )`;
+
+export const insertMuscleGroups = `
+  INSERT INTO muscle_groups (muscle_group)
+  VALUES ('Lats'),
+         ('Upper Traps'),
+         ('Middle Traps'),
+         ('Lower Traps'),
+         ('Rhomboids'),
+         ('Biceps'),
+         ('Upper Chest'),
+         ('Mid Chest'),
+         ('Lower Chest'),
+         ('Front Delts'),
+         ('Lateral Delts'),
+         ('Rear Delts'),
+         ('Brachioradialis'),
+         ('Forearm flexors'),
+         ('Calves'),
+         ('Glutes'),
+         ('Hamstrings'),
+         ('Lower Back'),
+         ('Neck'),
+         ('Quads'),
+         ('ABS'),
+         ('Triceps');
+`;
